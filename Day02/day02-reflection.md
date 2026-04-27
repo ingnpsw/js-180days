@@ -1,0 +1,6 @@
+- const prevents reassigning the variable itself
+- but you can still modify properties inside it
+- typeof [] returns object because arrays are a type of object in JS
+- Array.isArray() checks if something is a list [] or not
+- student.grades is [4, 3, 3.5] -> a list -> returns true
+- student is {name: "Jeffy", ...} -> not a list -> returns false
