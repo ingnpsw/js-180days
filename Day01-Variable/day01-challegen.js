@@ -1,4 +1,4 @@
-let studentName = "John Smith";
+const studentName = "John Smith";
 const studentId = "01";
 
 const subjects = [
@@ -7,8 +7,8 @@ const subjects = [
     {subjectName: "History", score: 7}
 ]
 
-let total = subjects[0].score + subjects[1].score + subjects[2].score;
-let average = total/3
+const total = subjects[0].score + subjects[1].score + subjects[2].score;
+const average = total/3
 
 console.log(typeof studentId);
 console.log(studentId);
