@@ -18,7 +18,7 @@ const tipPercentage = 10;
 const tipAmount = billAmount * 10 / 100;
 const total = tipAmount + billAmount;
 const eachPersonPays = Math.floor(total / numberOfPeople);
-const remainder = total - (eachPersonPays * 4);
+const remainder = total - (eachPersonPays * numberOfPeople);
 
 console.log("Bill Amount: "+billAmount+" baht");
 console.log("Tip Amount: "+tipAmount+" baht");
