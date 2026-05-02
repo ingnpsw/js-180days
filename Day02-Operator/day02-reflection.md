@@ -31,3 +31,18 @@ null      -> 0
 undefined -> NaN
 whitespace string -> 0
 "4px"     -> NaN (มีตัวอักษรปน)
+
+# Day 2 Reflection
+
+## Understood
+- "+" with string -> concatenation, "-" "*" "/" -> converts to number
+- "===" checks value + type, "==" only checks value (avoid!)
+- "null" converts to 0, "undefined" converts to NaN
+- "Math.floor()" rounds down, useful for splitting bills evenly
+- "!==" means "not equal to" (strict)
+
+## Confused
+- Nothing for now
+
+## Want to learn more
+- Nothing for now
