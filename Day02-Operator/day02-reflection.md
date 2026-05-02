@@ -24,3 +24,10 @@ Array of Objects → list of named data
 Object with Array → named data that contains a list
 - example: { name: "Jeffy", grades: [4, 3, 3.5] }
 - access: student.grades[0] → 4
+
++ string  -> concatenate
+- * /     -> convert to number
+null      -> 0
+undefined -> NaN
+whitespace string -> 0
+"4px"     -> NaN (มีตัวอักษรปน)
