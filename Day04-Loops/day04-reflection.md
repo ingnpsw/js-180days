@@ -1,0 +1,6 @@
+# Day 4 Pre-Assessment Reflection
+- Understood: ...
+- Confused: += vs =+
+-> += adds to current value (score += 5 means score = score + 5)
+-> =+ resets value (score =+ 5 means score = 5)
+- Want to know more: ...
