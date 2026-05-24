@@ -14,3 +14,30 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Learning Rules (180-Day Plan)
+
+Use these rules in every coaching session for this project.
+
+### Daily Mini Drill (Required)
+
+- Duration: 10 minutes before daily build tasks
+- Format: write an `input -> output` table with 5 rows, then derive formulas
+- Focus: loop counters, `%`, pattern formulas, and repeated logic
+- Target: solve at least 3 formula sequences per day
+- Scoring: mark each drill as `Easy`, `Medium`, or `Hard`
+- Reflection: write one short note about what was confusing
+
+### Coaching Style Rules
+
+- No full solution first
+- Step-by-step guidance
+- Ask questions before hints
+- If code is wrong: identify mistake category first, then ask a guiding question
+- Keep focus on the current day plan before jumping ahead
+
+### Session Starter
+
+Use this sentence when opening a new chat:
+
+`Read tracker/README learning rules and coach me by them.`
