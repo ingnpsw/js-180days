@@ -81,11 +81,11 @@ playerTotalScore = playerScore;
 
 if(computerTotalScore === 30){
     console.log("Computer Grade: A" + " and Final Score: " + computerTotalScore);
-}else if(computerTotalScore > 20){
+}else if(computerTotalScore >= 20){
     console.log("Computer Grade: B" + " and Final Score: " + computerTotalScore);
-}else if (computerTotalScore > 10){
+}else if (computerTotalScore >= 10){
     console.log("Computer Grade: C" + " and Final Score: " + computerTotalScore);
-}else if (computerTotalScore > 5){
+}else if (computerTotalScore >= 5){
     console.log("Computer Grade: D" + " and Final Score: " + computerTotalScore);
 }else{
     console.log("Computer Grade: F" + " and Final Score: " + computerTotalScore);
@@ -93,11 +93,11 @@ if(computerTotalScore === 30){
 
 if(playerTotalScore === 30){
     console.log("Player Grade: A" + " and Final Score: " + playerTotalScore);
-}else if(playerTotalScore > 20){
+}else if(playerTotalScore >= 20){
     console.log("Player Grade: B" + " and Final Score: " + playerTotalScore);
-}else if (playerTotalScore > 10){
+}else if (playerTotalScore >= 10){
     console.log("Player Grade: C" + " and Final Score: " + playerTotalScore);
-}else if (playerTotalScore > 5){
+}else if (playerTotalScore >= 5){
     console.log("Player Grade: D" + " and Final Score: " + playerTotalScore);
 }else{
     console.log("Player Grade: F" + " and Final Score: " + playerTotalScore);

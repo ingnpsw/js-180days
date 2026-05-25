@@ -41,3 +41,10 @@ Use these rules in every coaching session for this project.
 Use this sentence when opening a new chat:
 
 `Read tracker/README learning rules and coach me by them.`
+
+## Upgrade Track (Day 5-60)
+
+Use this plan to align daily work with a React + TypeScript job target:
+
+- [Day 5-60 Upgrade Plan](/Users/coolkid/freelance/js-180days/TRACK_UPGRADE_DAY5_DAY60.md)
+- [Coaching Ritual](/Users/coolkid/freelance/js-180days/COACHING_RITUAL.md)

@@ -112,6 +112,13 @@ const PORTFOLIO_STATUS = [
   { key: "live",       label: "🚀 Live!",    color: "#10B981" },
 ];
 
+const UPGRADE_TRACK = [
+  { phase: "Day 5-14", focus: "JS Core", goal: "Functions, arrays, objects, scope, pattern logic" },
+  { phase: "Day 15-30", focus: "DOM + Async + API", goal: "Events, fetch, loading/error states, mini CRUD app" },
+  { phase: "Day 31-45", focus: "React + TypeScript", goal: "Typed components, props/state/events, dashboard app" },
+  { phase: "Day 46-60", focus: "Production Mindset", goal: "Performance, testing, accessibility, portfolio polish" },
+];
+
 // ─── DAY OVERRIDES (Business/Sales + AI + Specialized) ─────────────
 // Inject high-market-value content into specific days. Applied after DAYS is built.
 
@@ -699,7 +706,39 @@ const RAW_DAYS = [
 ];
 
 // Apply DAY_OVERRIDES on top of generated days
-const DAYS = RAW_DAYS.map(d => DAY_OVERRIDES[d.day] ? { ...d, ...DAY_OVERRIDES[d.day] } : d);
+const BASE_DAYS = RAW_DAYS.map(d => DAY_OVERRIDES[d.day] ? { ...d, ...DAY_OVERRIDES[d.day] } : d);
+
+function withTrackGoals(days) {
+  return days.map((d) => {
+    const build = Array.isArray(d.build) ? [...d.build] : [];
+    const challenge = d.challenge || "";
+
+    if (d.phase === 2 || d.phase === 3) {
+      build.push("TypeScript track: เขียนงานวันนี้ด้วย type/interface ที่จำเป็น (no any โดยไม่จำเป็น)");
+    }
+
+    if (d.phase >= 2 && d.phase <= 7) {
+      build.push("Testing habit: เพิ่มอย่างน้อย 1 unit test หรือ 1 component test จากงานวันนี้");
+      build.push("A11y + Performance check: keyboard nav + loading state + render/perf sanity check");
+    }
+
+    if (d.phase >= 4) {
+      build.push("Freelance expert track: บันทึก business outcome/case-study note สำหรับงานวันนี้ 3 บรรทัด");
+    }
+
+    if (d.phase >= 5 && d.phase <= 8) {
+      build.push("English interview drill 10 นาที: อธิบายสิ่งที่ทำวันนี้เป็นภาษาอังกฤษแบบ concise");
+    }
+
+    return {
+      ...d,
+      build,
+      challenge: `${challenge}${challenge ? " | " : ""}Dual Goal: job-ready React/TS + expert freelance outcome`,
+    };
+  });
+}
+
+const DAYS = withTrackGoals(BASE_DAYS);
 
 function generatePhaseMeta(startDay, endDay, phaseId, titles) {
   const days = [];
@@ -1299,6 +1338,31 @@ export default function App() {
           {/* Overview */}
           {view === "overview" && (
             <div style={{ padding: "12px 14px 100px" }}>
+              <div style={{ marginBottom: 12, background: "linear-gradient(135deg, rgba(16,185,129,0.12), rgba(59,130,246,0.08))", borderRadius: 12, border: "1px solid rgba(16,185,129,0.25)", overflow: "hidden" }}>
+                <div style={{ padding: "12px 12px 8px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div style={{ fontSize: 10, color: "#10B981", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 4 }}>
+                    Upgrade Track
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 3 }}>
+                    Day 5-60 React + TypeScript Job Path
+                  </div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.45 }}>
+                    Goal: move from JS foundation to job-ready portfolio for frontend applications.
+                  </div>
+                </div>
+                <div style={{ padding: 12 }}>
+                  {UPGRADE_TRACK.map((item) => (
+                    <div key={item.phase} style={{ padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 2 }}>
+                        <span style={{ fontSize: 10, color: "#93C5FD", fontWeight: 700 }}>{item.phase}</span>
+                        <span style={{ fontSize: 10, color: "#34D399", fontWeight: 700 }}>{item.focus}</span>
+                      </div>
+                      <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item.goal}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {[{ label: "🎯 FOUNDATION → FREELANCE", phases: PHASES.slice(0, 4) }, { label: "🔥 ADVANCED → EXPERT", phases: PHASES.slice(4) }].map((sec, si) => (
                 <div key={si} style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 1, marginBottom: 8 }}>{sec.label}</div>
