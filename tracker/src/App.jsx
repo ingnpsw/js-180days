@@ -119,6 +119,41 @@ const UPGRADE_TRACK = [
   { phase: "Day 46-60", focus: "Production Mindset", goal: "Performance, testing, accessibility, portfolio polish" },
 ];
 
+const PHASE_LEARNING_SOURCES = {
+  1: [
+    { label: "javascript.info", url: "https://javascript.info" },
+    { label: "MDN JavaScript", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
+  ],
+  2: [
+    { label: "React Docs", url: "https://react.dev/learn" },
+    { label: "Tailwind Docs", url: "https://tailwindcss.com/docs" },
+  ],
+  3: [
+    { label: "Next.js Docs", url: "https://nextjs.org/docs" },
+    { label: "Supabase Docs", url: "https://supabase.com/docs" },
+  ],
+  4: [
+    { label: "Upwork Academy", url: "https://community.upwork.com/t5/Academy/ct-p/Academy" },
+    { label: "Google UX Writing", url: "https://developers.google.com/tech-writing" },
+  ],
+  5: [
+    { label: "You Don't Know JS", url: "https://github.com/getify/You-Dont-Know-JS" },
+    { label: "MDN Advanced JS", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" },
+  ],
+  6: [
+    { label: "NeetCode Roadmap", url: "https://neetcode.io/roadmap" },
+    { label: "LeetCode", url: "https://leetcode.com" },
+  ],
+  7: [
+    { label: "System Design Primer", url: "https://github.com/donnemartin/system-design-primer" },
+    { label: "AWS Architecture Center", url: "https://aws.amazon.com/architecture/" },
+  ],
+  8: [
+    { label: "Frontend Interview Handbook", url: "https://www.frontendinterviewhandbook.com" },
+    { label: "Pramp", url: "https://www.pramp.com" },
+  ],
+};
+
 // ─── DAY OVERRIDES (Business/Sales + AI + Specialized) ─────────────
 // Inject high-market-value content into specific days. Applied after DAYS is built.
 
@@ -712,6 +747,9 @@ function withTrackGoals(days) {
   return days.map((d) => {
     const build = Array.isArray(d.build) ? [...d.build] : [];
     const challenge = d.challenge || "";
+    const learnSources = d.learnSources && d.learnSources.length > 0
+      ? d.learnSources
+      : (PHASE_LEARNING_SOURCES[d.phase] || []);
 
     if (d.phase === 2 || d.phase === 3) {
       build.push("TypeScript track: เขียนงานวันนี้ด้วย type/interface ที่จำเป็น (no any โดยไม่จำเป็น)");
@@ -733,6 +771,7 @@ function withTrackGoals(days) {
     return {
       ...d,
       build,
+      learnSources,
       challenge: `${challenge}${challenge ? " | " : ""}Dual Goal: job-ready React/TS + expert freelance outcome`,
     };
   });
@@ -1437,6 +1476,38 @@ export default function App() {
                             <div style={{ marginBottom: 10, padding: "8px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 6, fontSize: 11 }}>
                               <span style={{ color: MUTED }}>📖 Learn (15 min): </span>
                               <span style={{ color: ph.color, fontFamily: "monospace", fontSize: 10 }}>{day.learnUrl}</span>
+                            </div>
+                          )}
+                          {day.learnSources && day.learnSources.length > 0 && (
+                            <div style={{ marginBottom: 10, padding: "8px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 6 }}>
+                              <div style={{ fontSize: 10, color: MUTED, fontWeight: 700, letterSpacing: 1, marginBottom: 6, textTransform: "uppercase" }}>
+                                📚 Learning Sources (20%)
+                              </div>
+                              <div style={{ display: "grid", gap: 6 }}>
+                                {day.learnSources.map((src) => (
+                                  <a
+                                    key={`${day.day}-${src.url}`}
+                                    href={src.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      gap: 10,
+                                      alignItems: "center",
+                                      padding: "7px 8px",
+                                      borderRadius: 6,
+                                      border: "1px solid rgba(255,255,255,0.08)",
+                                      color: TEXT,
+                                      textDecoration: "none",
+                                      fontSize: 11,
+                                    }}
+                                  >
+                                    <span>{src.label}</span>
+                                    <span style={{ color: ph.color, fontSize: 10 }}>open</span>
+                                  </a>
+                                ))}
+                              </div>
                             </div>
                           )}
                           <div style={{ fontSize: 10, color: MUTED, fontWeight: 700, letterSpacing: 1, marginBottom: 6, textTransform: "uppercase" }}>💪 Build (45 min)</div>
