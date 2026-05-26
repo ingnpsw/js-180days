@@ -169,7 +169,7 @@ function sourceFromLearnUrl(learnUrl) {
     const u = new URL(normalized);
     const path = `${u.hostname}${u.pathname}`.replace(/\/$/, "");
     return {
-      label: "Topic Path",
+      label: "Learn Source",
       url: normalized,
       path: path || u.hostname,
     };
@@ -1516,7 +1516,14 @@ export default function App() {
                           {day.learnUrl && (
                             <div style={{ marginBottom: 10, padding: "8px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 6, fontSize: 11 }}>
                               <span style={{ color: MUTED }}>📖 Learn (15 min): </span>
-                              <span style={{ color: ph.color, fontFamily: "monospace", fontSize: 10 }}>{day.learnUrl}</span>
+                              <a
+                                href={normalizeSourceUrl(day.learnUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: ph.color, fontFamily: "monospace", fontSize: 10, textDecoration: "none" }}
+                              >
+                                {sourceFromLearnUrl(day.learnUrl)?.path || day.learnUrl}
+                              </a>
                             </div>
                           )}
                           {day.learnSources && day.learnSources.length > 0 && (
