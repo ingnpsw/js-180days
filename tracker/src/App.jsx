@@ -154,6 +154,30 @@ const PHASE_LEARNING_SOURCES = {
   ],
 };
 
+function normalizeSourceUrl(url) {
+  if (!url) return "";
+  const trimmed = String(url).trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://${trimmed}`;
+}
+
+function sourceFromLearnUrl(learnUrl) {
+  const normalized = normalizeSourceUrl(learnUrl);
+  if (!normalized) return null;
+  try {
+    const u = new URL(normalized);
+    const path = `${u.hostname}${u.pathname}`.replace(/\/$/, "");
+    return {
+      label: "Topic Path",
+      url: normalized,
+      path: path || u.hostname,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ─── DAY OVERRIDES (Business/Sales + AI + Specialized) ─────────────
 // Inject high-market-value content into specific days. Applied after DAYS is built.
 
@@ -747,9 +771,13 @@ function withTrackGoals(days) {
   return days.map((d) => {
     const build = Array.isArray(d.build) ? [...d.build] : [];
     const challenge = d.challenge || "";
-    const learnSources = d.learnSources && d.learnSources.length > 0
+    const baseSources = d.learnSources && d.learnSources.length > 0
       ? d.learnSources
       : (PHASE_LEARNING_SOURCES[d.phase] || []);
+    const topicSource = sourceFromLearnUrl(d.learnUrl);
+    const learnSources = topicSource
+      ? [topicSource, ...baseSources.filter((s) => normalizeSourceUrl(s.url) !== topicSource.url)]
+      : baseSources;
 
     if (d.phase === 2 || d.phase === 3) {
       build.push("TypeScript track: เขียนงานวันนี้ด้วย type/interface ที่จำเป็น (no any โดยไม่จำเป็น)");
@@ -823,6 +851,9 @@ export default function App() {
   const [reflections, setReflections] = useState(() => {
     try { return JSON.parse(localStorage.getItem("expert-v3-reflections")) || {}; } catch { return {}; }
   });
+  const [learnDone, setLearnDone] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("expert-v3-learn-done")) || {}; } catch { return {}; }
+  });
 
   const [expandedDay, setExpandedDay] = useState(null);
   const [activePhase, setActivePhase] = useState(0);
@@ -838,6 +869,7 @@ export default function App() {
   useEffect(() => { try { localStorage.setItem("expert-v3-portfolio", JSON.stringify(portfolioData)); } catch {} }, [portfolioData]);
   useEffect(() => { try { localStorage.setItem("expert-v3-income-target", String(incomeTarget)); } catch {} }, [incomeTarget]);
   useEffect(() => { try { localStorage.setItem("expert-v3-reflections", JSON.stringify(reflections)); } catch {} }, [reflections]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-learn-done", JSON.stringify(learnDone)); } catch {} }, [learnDone]);
 
   const toggleBuild = useCallback((day, idx) => {
     setDone(p => {
@@ -850,6 +882,15 @@ export default function App() {
 
   const setPretest  = (day, result) => setPretestResults(p => ({ ...p, [day]: result }));
   const logHint     = (day, level) => setHintsUsed(p => ({ ...p, [day]: Math.max(p[day] || 0, level) }));
+  const toggleLearnSource = useCallback((day, url) => {
+    setLearnDone((prev) => {
+      const key = `${day}::${url}`;
+      const next = { ...prev };
+      if (next[key]) delete next[key];
+      else next[key] = true;
+      return next;
+    });
+  }, []);
 
   const setPortfolio = (id, field, val) =>
     setPortfolioData(p => ({ ...p, [id]: { ...(p[id] || {}), [field]: val } }));
@@ -1484,12 +1525,14 @@ export default function App() {
                                 📚 Learning Sources (20%)
                               </div>
                               <div style={{ display: "grid", gap: 6 }}>
-                                {day.learnSources.map((src) => (
-                                  <a
-                                    key={`${day.day}-${src.url}`}
-                                    href={src.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                {day.learnSources.map((src, idx) => {
+                                  const isPrimary = idx === 0;
+                                  const normalizedUrl = normalizeSourceUrl(src.url);
+                                  const key = `${day.day}::${normalizedUrl}`;
+                                  const learned = !!learnDone[key];
+                                  return (
+                                  <div
+                                    key={`${day.day}-${normalizedUrl || src.label}`}
                                     style={{
                                       display: "flex",
                                       justifyContent: "space-between",
@@ -1499,14 +1542,42 @@ export default function App() {
                                       borderRadius: 6,
                                       border: "1px solid rgba(255,255,255,0.08)",
                                       color: TEXT,
-                                      textDecoration: "none",
                                       fontSize: 11,
                                     }}
                                   >
-                                    <span>{src.label}</span>
-                                    <span style={{ color: ph.color, fontSize: 10 }}>open</span>
-                                  </a>
-                                ))}
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                      <button
+                                        onClick={() => toggleLearnSource(day.day, normalizedUrl)}
+                                        style={{
+                                          width: 18,
+                                          height: 18,
+                                          borderRadius: 4,
+                                          border: learned ? "none" : "2px solid rgba(255,255,255,0.2)",
+                                          background: learned ? ph.color : "transparent",
+                                          color: "#fff",
+                                          cursor: "pointer",
+                                          fontSize: 10,
+                                          fontWeight: 700,
+                                        }}
+                                        aria-label={`toggle learned ${src.label}`}
+                                      >
+                                        {learned ? "✓" : ""}
+                                      </button>
+                                      <div>
+                                        <div>{src.label}</div>
+                                        <div style={{ fontSize: 9, color: MUTED, marginTop: 1 }}>
+                                          {src.path || normalizeSourceUrl(src.url).replace(/^https?:\/\//, "")}
+                                        </div>
+                                      </div>
+                                      <span style={{ fontSize: 9, color: isPrimary ? "#34D399" : "#93C5FD", border: `1px solid ${isPrimary ? "rgba(52,211,153,0.45)" : "rgba(147,197,253,0.45)"}`, borderRadius: 99, padding: "1px 6px" }}>
+                                        {isPrimary ? "Primary" : "Secondary"}
+                                      </span>
+                                    </div>
+                                    <a href={normalizedUrl} target="_blank" rel="noopener noreferrer" style={{ color: ph.color, fontSize: 10, textDecoration: "none" }}>
+                                      open
+                                    </a>
+                                  </div>
+                                )})}
                               </div>
                             </div>
                           )}
