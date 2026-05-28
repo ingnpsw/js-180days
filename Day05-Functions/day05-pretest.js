@@ -35,3 +35,33 @@ Example output for size = 5:
  *******
 *********
 */
+
+// i   Spaces   Stars
+// 1   2        1  spaces = size - i
+// 2   1        3  stars = i * 2 - 1
+// 3   0        5
+
+const testCase = [3, 5, 7, 10];
+
+for(let t = 0; t < testCase.length; t++){
+    let size = testCase[t];
+    
+    if(size % 2 ===0){
+        size += 1;
+    }
+
+    for(let i = 1; i <= size; i++){
+        let spaces = "";
+        let stars = "";
+
+        for(let j = 1; j <= size - i; j++){
+            spaces += " ";
+        }
+
+        for(let k = 1; k <= i * 2 - 1; k++){
+            stars += "*";
+        }
+        console.log(spaces + stars);
+    }
+    console.log("");
+}
