@@ -609,22 +609,39 @@ function defaultLearnUrlForPhase(phase) {
   return "https://www.frontendinterviewhandbook.com";
 }
 
+function defaultFilesForDay(dayNumber) {
+  const dayId = `day${String(dayNumber).padStart(2, "0")}`;
+  return [
+    `${dayId}.js`,
+    `${dayId}-pretest.js`,
+    `${dayId}-challenge.js`,
+    `${dayId}-reflection.md`,
+  ];
+}
+
+function normalizeDayRecord(day) {
+  const normalized = defaultFilesForDay(day.day);
+  return {
+    ...day,
+    files: normalized,
+    learnUrl: day.learnUrl || defaultLearnUrlForPhase(day.phase),
+  };
+}
+
 const TRACK_DAYS = DAYS.map((day) => {
   if (day.day <= 60) {
-    return {
+    return normalizeDayRecord({
       ...day,
-      learnUrl: day.learnUrl || defaultLearnUrlForPhase(day.phase),
-    };
+    });
   }
   const plan = buildSolidPlan(day.day, day.phase);
   if (!plan) {
-    return {
+    return normalizeDayRecord({
       ...day,
-      learnUrl: day.learnUrl || defaultLearnUrlForPhase(day.phase),
-    };
+    });
   }
   if (day.day % 10 === 0) {
-    return {
+    return normalizeDayRecord({
       ...day,
       title: `Recovery Day • Day ${day.day}`,
       topic: "clear backlog + reinforce weak points",
@@ -640,9 +657,9 @@ const TRACK_DAYS = DAYS.map((day) => {
       challenge: "ถ้ายังมีงานค้าง ให้ยังไม่เปิดวันใหม่จนกว่า backlog วันนี้จะลดลง",
       isRecovery: true,
       isMeta: false,
-    };
+    });
   }
-  return {
+  return normalizeDayRecord({
     ...day,
     title: `${day.title}${plan.titleSuffix || ""}`,
     topic: plan.topicSuffix || day.topic,
@@ -652,7 +669,7 @@ const TRACK_DAYS = DAYS.map((day) => {
     build: plan.build,
     challenge: plan.challenge,
     isMeta: false,
-  };
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════
