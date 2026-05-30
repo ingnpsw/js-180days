@@ -96,6 +96,49 @@ const PHASES = [
   { id: 8, title: "Mock Interview", color: "#D946EF", range: [171, 180], icon: "👑" },
 ];
 
+const PORTFOLIO_MILESTONES = [
+  { id: "p1", day: 21, title: "To-Do App", target: "CRUD + local storage + clean UI" },
+  { id: "p2", day: 33, title: "Weather App", target: "API + loading/error state" },
+  { id: "p3", day: 59, title: "CRUD Blog", target: "Auth + DB + deploy" },
+  { id: "p4", day: 70, title: "Mini SaaS", target: "dashboard + file upload + role" },
+  { id: "p5", day: 90, title: "Portfolio + Client Pack", target: "profile + proposal templates" },
+  { id: "p6", day: 165, title: "System Design Case", target: "architecture + trade-off doc" },
+];
+
+const PORTFOLIO_STATUS = [
+  { key: "not_started", label: "Not Started", color: "#6B7280" },
+  { key: "building", label: "Building", color: "#F59E0B" },
+  { key: "review", label: "Review", color: "#3B82F6" },
+  { key: "done", label: "Done", color: "#10B981" },
+  { key: "live", label: "Live", color: "#34D399" },
+];
+
+const FREELANCE_TRUST_ITEMS = [
+  "มีอย่างน้อย 2 โปรเจกต์ที่แก้ปัญหาธุรกิจชัดเจน",
+  "แต่ละโปรเจกต์มี Problem -> Solution -> Result",
+  "แต่ละโปรเจกต์มี Demo + Repo + README + Case Study",
+  "มีผลลัพธ์เชิงตัวเลข (before/after) อย่างน้อย 1 จุด",
+  "มี proposal template + pricing package พร้อมใช้",
+  "มี handoff checklist + revision policy",
+];
+
+const CASE_STUDY_SECTIONS = [
+  "Project / Role / Duration / Stack / Demo / Repo",
+  "Problem และผลกระทบก่อนแก้",
+  "Scope (In scope / Out of scope / Constraints)",
+  "Solution + Architecture แบบย่อ",
+  "Technical decisions + Trade-offs",
+  "Result (ตัวเลข + business impact) + Next improvements",
+];
+
+const PROPOSAL_SECTIONS = [
+  "Client context + problem summary",
+  "Scope + deliverables + timeline/milestones",
+  "Pricing package (Starter/Pro/Premium)",
+  "Assumptions + revision policy + payment terms",
+  "Risk & mitigation + acceptance criteria + sign-off",
+];
+
 // Daily structure: 4 phases (pretest, learn, build, debrief)
 // For brevity, I'll define metadata for all 180 days but only first 7 have full detail
 // Days 8-180 follow the same pattern — full details in the Playbook
@@ -682,6 +725,8 @@ export default function ExpertTracker() {
   const [hintsUsed, setHintsUsed] = useState({});
   const [dailyDifficulty, setDailyDifficulty] = useState({});
   const [dailyConfidence, setDailyConfidence] = useState({});
+  const [portfolioProgress, setPortfolioProgress] = useState({});
+  const [freelanceChecklist, setFreelanceChecklist] = useState({});
   const [expandedDay, setExpandedDay] = useState(null);
   const [activePhase, setActivePhase] = useState(0);
   const [view, setView] = useState("overview");
@@ -696,11 +741,15 @@ export default function ExpertTracker() {
       const h = localStorage.getItem("expert-v3-hints");
       const dd = localStorage.getItem("expert-v3-difficulty");
       const dc = localStorage.getItem("expert-v3-confidence");
+      const pp = localStorage.getItem("expert-v3-portfolio");
+      const fc = localStorage.getItem("expert-v3-freelance-checklist");
       if (d) setDone(JSON.parse(d));
       if (p) setPretestResults(JSON.parse(p));
       if (h) setHintsUsed(JSON.parse(h));
       if (dd) setDailyDifficulty(JSON.parse(dd));
       if (dc) setDailyConfidence(JSON.parse(dc));
+      if (pp) setPortfolioProgress(JSON.parse(pp));
+      if (fc) setFreelanceChecklist(JSON.parse(fc));
     } catch {}
   }, []);
   // Save
@@ -709,6 +758,8 @@ export default function ExpertTracker() {
   useEffect(() => { try { localStorage.setItem("expert-v3-hints", JSON.stringify(hintsUsed)); } catch {} }, [hintsUsed]);
   useEffect(() => { try { localStorage.setItem("expert-v3-difficulty", JSON.stringify(dailyDifficulty)); } catch {} }, [dailyDifficulty]);
   useEffect(() => { try { localStorage.setItem("expert-v3-confidence", JSON.stringify(dailyConfidence)); } catch {} }, [dailyConfidence]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-portfolio", JSON.stringify(portfolioProgress)); } catch {} }, [portfolioProgress]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-freelance-checklist", JSON.stringify(freelanceChecklist)); } catch {} }, [freelanceChecklist]);
 
   const toggleBuild = useCallback((day, idx) => {
     setDone(p => {
@@ -731,6 +782,12 @@ export default function ExpertTracker() {
   };
   const setConfidence = (day, value) => {
     setDailyConfidence(p => ({ ...p, [day]: value }));
+  };
+  const setPortfolioStatus = (id, status) => {
+    setPortfolioProgress(p => ({ ...p, [id]: status }));
+  };
+  const toggleFreelanceItem = (idx) => {
+    setFreelanceChecklist((p) => ({ ...p, [idx]: !p[idx] }));
   };
 
   const dayComplete = (day) => {
@@ -1009,6 +1066,31 @@ export default function ExpertTracker() {
       </div>
 
       {/* ─── PHASE FILTER ─── */}
+      <div style={{ padding: "12px 14px 0", display: "flex", gap: 6 }}>
+        {[
+          { key: "overview", label: "📁 Tracker" },
+          { key: "freelance", label: "💼 Freelance Portfolio" },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setView(tab.key)}
+            style={{
+              padding: "7px 12px",
+              borderRadius: 9,
+              border: "none",
+              cursor: "pointer",
+              fontSize: 11,
+              fontWeight: 700,
+              background: view === tab.key ? "rgba(59,130,246,0.25)" : CARD,
+              color: view === tab.key ? "#93C5FD" : MUTED,
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ─── PHASE FILTER ─── */}
       <div style={{ padding: "12px 14px 0", overflowX: "auto", whiteSpace: "nowrap", WebkitOverflowScrolling: "touch" }}>
         <button onClick={() => { setActivePhase(0); setView("overview"); }} style={{
           display: "inline-block", padding: "6px 12px", borderRadius: 99, border: "none",
@@ -1069,6 +1151,55 @@ export default function ExpertTracker() {
               {hardDays.length > 0 ? ` • Hard days: ${hardDays.join(", ")}` : " • Hard days: none"}
               {lowConfidenceDays.length > 0 ? ` • Low confidence: ${lowConfidenceDays.join(", ")}` : " • Low confidence: none"}
             </div>
+          </div>
+
+          <div style={{
+            marginBottom: 12,
+            background: "rgba(59,130,246,0.08)",
+            border: "1px solid rgba(59,130,246,0.25)",
+            borderRadius: 10,
+            padding: 10,
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.2, color: "#60A5FA", marginBottom: 8 }}>
+              PORTFOLIO TRACKER
+            </div>
+            {PORTFOLIO_MILESTONES.map((m) => {
+              const statusKey = portfolioProgress[m.id] || "not_started";
+              const status = PORTFOLIO_STATUS.find((s) => s.key === statusKey) || PORTFOLIO_STATUS[0];
+              return (
+                <div key={m.id} style={{ padding: "8px 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 5 }}>
+                    <div style={{ fontSize: 11, color: "#fff", fontWeight: 600 }}>
+                      Day {m.day} • {m.title}
+                    </div>
+                    <div style={{ fontSize: 10, color: status.color, fontWeight: 700 }}>
+                      {status.label}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 10, color: MUTED, marginBottom: 6 }}>{m.target}</div>
+                  <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                    {PORTFOLIO_STATUS.map((s) => (
+                      <button
+                        key={s.key}
+                        onClick={() => setPortfolioStatus(m.id, s.key)}
+                        style={{
+                          padding: "4px 8px",
+                          borderRadius: 99,
+                          border: "none",
+                          cursor: "pointer",
+                          fontSize: 9,
+                          fontWeight: 700,
+                          background: statusKey === s.key ? s.color : "rgba(255,255,255,0.06)",
+                          color: statusKey === s.key ? "#fff" : MUTED,
+                        }}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {[
@@ -1310,19 +1441,57 @@ export default function ExpertTracker() {
         </div>
       )}
 
+      {/* ─── FREELANCE PORTFOLIO ─── */}
+      {view === "freelance" && (
+        <div style={{ padding: "14px 14px 90px" }}>
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#60A5FA", marginBottom: 8 }}>TRUST CHECKLIST</div>
+            {FREELANCE_TRUST_ITEMS.map((item, idx) => (
+              <div key={idx} onClick={() => toggleFreelanceItem(idx)} style={{ display: "flex", gap: 8, alignItems: "flex-start", cursor: "pointer", padding: "6px 0" }}>
+                <div style={{
+                  width: 18, height: 18, borderRadius: 4, flexShrink: 0, marginTop: 1,
+                  background: freelanceChecklist[idx] ? "#10B981" : "transparent",
+                  border: freelanceChecklist[idx] ? "none" : "2px solid rgba(255,255,255,0.15)",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontWeight: 700,
+                }}>{freelanceChecklist[idx] ? "✓" : ""}</div>
+                <span style={{ fontSize: 11, color: freelanceChecklist[idx] ? MUTED : TEXT, textDecoration: freelanceChecklist[idx] ? "line-through" : "none" }}>{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", marginBottom: 8 }}>CASE STUDY TEMPLATE (REQUIRED)</div>
+            {CASE_STUDY_SECTIONS.map((s, i) => (
+              <div key={i} style={{ fontSize: 11, color: TEXT, padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                {i + 1}. {s}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", marginBottom: 8 }}>PROPOSAL TEMPLATE (CLIENT READY)</div>
+            {PROPOSAL_SECTIONS.map((s, i) => (
+              <div key={i} style={{ fontSize: 11, color: TEXT, padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                {i + 1}. {s}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ─── BOTTOM BAR ─── */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
         padding: "12px 14px", background: "linear-gradient(transparent, #050607 40%)",
         display: "flex", gap: 8, justifyContent: "center",
       }}>
-        {view === "days" && (
+        {view !== "overview" && (
           <button onClick={() => { setActivePhase(0); setView("overview"); }} style={{
             padding: "7px 16px", borderRadius: 99, border: `1px solid ${BORDER}`,
             background: CARD, color: MUTED, fontSize: 11, cursor: "pointer",
           }}>← Overview</button>
         )}
-        <button onClick={() => { if (confirm("ลบ progress ทั้งหมด?")) { setDone({}); setPretestResults({}); setHintsUsed({}); setDailyDifficulty({}); setDailyConfidence({}); } }} style={{
+        <button onClick={() => { if (confirm("ลบ progress ทั้งหมด?")) { setDone({}); setPretestResults({}); setHintsUsed({}); setDailyDifficulty({}); setDailyConfidence({}); setPortfolioProgress({}); setFreelanceChecklist({}); } }} style={{
           padding: "7px 16px", borderRadius: 99, border: `1px solid ${BORDER}`,
           background: CARD, color: MUTED, fontSize: 11, cursor: "pointer",
         }}>🔄 Reset</button>
