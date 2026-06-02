@@ -139,6 +139,9 @@ const PROPOSAL_SECTIONS = [
   "Risk & mitigation + acceptance criteria + sign-off",
 ];
 
+const DDIA_TOTAL_PAGES = 613;
+const DDIA_PACE_OPTIONS = [2, 3, 4];
+
 // Daily structure: 4 phases (pretest, learn, build, debrief)
 // For brevity, I'll define metadata for all 180 days but only first 7 have full detail
 // Days 8-180 follow the same pattern — full details in the Playbook
@@ -652,6 +655,13 @@ function defaultLearnUrlForPhase(phase) {
   return "https://www.frontendinterviewhandbook.com";
 }
 
+function normalizeLearnUrl(url) {
+  const raw = String(url || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  return `https://${raw}`;
+}
+
 function defaultFilesForDay(dayNumber) {
   const dayId = `day${String(dayNumber).padStart(2, "0")}`;
   return [
@@ -732,6 +742,9 @@ export default function ExpertTracker() {
   const [view, setView] = useState("overview");
   const [activeTemplate, setActiveTemplate] = useState(null);
   const [showingHintLevel, setShowingHintLevel] = useState(null);
+  const [ddiaPace, setDdiaPace] = useState(3);
+  const [ddiaPagesRead, setDdiaPagesRead] = useState(0);
+  const [ddiaMilestones, setDdiaMilestones] = useState({});
 
   // Load
   useEffect(() => {
@@ -743,6 +756,9 @@ export default function ExpertTracker() {
       const dc = localStorage.getItem("expert-v3-confidence");
       const pp = localStorage.getItem("expert-v3-portfolio");
       const fc = localStorage.getItem("expert-v3-freelance-checklist");
+      const dp = localStorage.getItem("expert-v3-ddia-pace");
+      const dr = localStorage.getItem("expert-v3-ddia-pages-read");
+      const dm = localStorage.getItem("expert-v3-ddia-milestones");
       if (d) setDone(JSON.parse(d));
       if (p) setPretestResults(JSON.parse(p));
       if (h) setHintsUsed(JSON.parse(h));
@@ -750,6 +766,9 @@ export default function ExpertTracker() {
       if (dc) setDailyConfidence(JSON.parse(dc));
       if (pp) setPortfolioProgress(JSON.parse(pp));
       if (fc) setFreelanceChecklist(JSON.parse(fc));
+      if (dp) setDdiaPace(Math.max(2, Math.min(4, Number(dp) || 3)));
+      if (dr) setDdiaPagesRead(Math.max(0, Math.min(DDIA_TOTAL_PAGES, Number(dr) || 0)));
+      if (dm) setDdiaMilestones(JSON.parse(dm));
     } catch {}
   }, []);
   // Save
@@ -760,6 +779,9 @@ export default function ExpertTracker() {
   useEffect(() => { try { localStorage.setItem("expert-v3-confidence", JSON.stringify(dailyConfidence)); } catch {} }, [dailyConfidence]);
   useEffect(() => { try { localStorage.setItem("expert-v3-portfolio", JSON.stringify(portfolioProgress)); } catch {} }, [portfolioProgress]);
   useEffect(() => { try { localStorage.setItem("expert-v3-freelance-checklist", JSON.stringify(freelanceChecklist)); } catch {} }, [freelanceChecklist]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-ddia-pace", String(ddiaPace)); } catch {} }, [ddiaPace]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-ddia-pages-read", String(ddiaPagesRead)); } catch {} }, [ddiaPagesRead]);
+  useEffect(() => { try { localStorage.setItem("expert-v3-ddia-milestones", JSON.stringify(ddiaMilestones)); } catch {} }, [ddiaMilestones]);
 
   const toggleBuild = useCallback((day, idx) => {
     setDone(p => {
@@ -837,6 +859,23 @@ export default function ExpertTracker() {
     .filter(d => d.day < (nextDay?.day || 181))
     .filter(d => !dayComplete(d.day))
     .length;
+  const ddiaRemainingPages = Math.max(0, DDIA_TOTAL_PAGES - ddiaPagesRead);
+  const ddiaDaysRemaining = Math.ceil(ddiaRemainingPages / ddiaPace);
+  const ddiaProgress = ddiaPagesRead / DDIA_TOTAL_PAGES;
+  const ddiaCurrentStart = Math.min(DDIA_TOTAL_PAGES, ddiaPagesRead + 1);
+  const ddiaCurrentEnd = Math.min(DDIA_TOTAL_PAGES, ddiaPagesRead + ddiaPace);
+  const ddiaCurrentBlock = Math.floor(ddiaPagesRead / 20) + 1;
+  const ddiaTotalBlocks = Math.ceil(DDIA_TOTAL_PAGES / 20);
+  const ddiaBlocks = Array.from({ length: ddiaTotalBlocks }, (_, i) => {
+    const idx = i + 1;
+    const start = i * 20 + 1;
+    const end = Math.min(DDIA_TOTAL_PAGES, (i + 1) * 20);
+    return { idx, start, end };
+  });
+  const ddiaDoneMilestones = Object.values(ddiaMilestones).filter(Boolean).length;
+  const toggleDdiaMilestone = (idx) => {
+    setDdiaMilestones((prev) => ({ ...prev, [idx]: !prev[idx] }));
+  };
 
   // ─── STYLE CONSTANTS ───
   const BG = "linear-gradient(160deg, #050607 0%, #0A0B10 50%, #0E1015 100%)";
@@ -1327,12 +1366,12 @@ export default function ExpertTracker() {
                         <div style={{ marginBottom: 10, padding: "8px 10px", background: "rgba(255,255,255,0.02)", borderRadius: 6, fontSize: 11 }}>
                           <span style={{ color: MUTED }}>📖 Learn (15 min): </span>
                           <a
-                            href={day.learnUrl}
+                            href={normalizeLearnUrl(day.learnUrl)}
                             target="_blank"
                             rel="noreferrer"
                             style={{ color: ph.color, fontFamily: "monospace", fontSize: 10, textDecoration: "underline" }}
                           >
-                            {day.learnUrl}
+                            {normalizeLearnUrl(day.learnUrl)}
                           </a>
                         </div>
                       )}
@@ -1445,6 +1484,91 @@ export default function ExpertTracker() {
       {view === "freelance" && (
         <div style={{ padding: "14px 14px 90px" }}>
           <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", marginBottom: 8 }}>DDIA FULL JOURNEY (PAGE 1-613)</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+              <div style={{ background: "rgba(245,158,11,0.08)", borderRadius: 8, padding: 8, border: "1px solid rgba(245,158,11,0.25)" }}>
+                <div style={{ fontSize: 10, color: MUTED }}>อ่านแล้ว</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#F59E0B" }}>{ddiaPagesRead}<span style={{ fontSize: 10, color: MUTED }}>/613</span></div>
+              </div>
+              <div style={{ background: "rgba(59,130,246,0.08)", borderRadius: 8, padding: 8, border: "1px solid rgba(59,130,246,0.25)" }}>
+                <div style={{ fontSize: 10, color: MUTED }}>คาดว่าเหลือ</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#60A5FA" }}>{ddiaDaysRemaining}<span style={{ fontSize: 10, color: MUTED }}> วัน</span></div>
+              </div>
+            </div>
+            <div style={{ height: 5, borderRadius: 99, background: "rgba(255,255,255,0.05)", overflow: "hidden", marginBottom: 10 }}>
+              <div style={{ height: "100%", width: `${ddiaProgress * 100}%`, background: "linear-gradient(90deg, #F59E0B, #10B981)" }} />
+            </div>
+            <div style={{ fontSize: 10, color: TEXT, marginBottom: 8 }}>
+              วันนี้อ่านหน้า <strong>{ddiaCurrentStart}-{ddiaCurrentEnd}</strong> • Milestone block {Math.min(ddiaCurrentBlock, ddiaTotalBlocks)}/{ddiaTotalBlocks}
+            </div>
+            <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+              {DDIA_PACE_OPTIONS.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setDdiaPace(p)}
+                  style={{
+                    padding: "6px 10px",
+                    borderRadius: 99,
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    background: ddiaPace === p ? "#3B82F6" : "rgba(255,255,255,0.06)",
+                    color: ddiaPace === p ? "#fff" : MUTED,
+                  }}
+                >
+                  {p} หน้า/วัน
+                </button>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button
+                onClick={() => setDdiaPagesRead((x) => Math.min(DDIA_TOTAL_PAGES, x + ddiaPace))}
+                style={{ flex: 1, padding: "8px 10px", borderRadius: 8, border: "none", background: "#10B981", color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer" }}
+              >
+                ✅ Complete Today's Reading
+              </button>
+              <button
+                onClick={() => setDdiaPagesRead((x) => Math.max(0, x - ddiaPace))}
+                style={{ padding: "8px 10px", borderRadius: 8, border: "none", background: "rgba(255,255,255,0.08)", color: MUTED, fontSize: 10, fontWeight: 700, cursor: "pointer" }}
+              >
+                ↩ Undo
+              </button>
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA" }}>DDIA MILESTONES (EVERY 20 PAGES)</div>
+              <div style={{ fontSize: 10, color: MUTED }}>{ddiaDoneMilestones}/{ddiaTotalBlocks}</div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+              {ddiaBlocks.map((b) => {
+                const done = !!ddiaMilestones[b.idx];
+                return (
+                  <button
+                    key={b.idx}
+                    onClick={() => toggleDdiaMilestone(b.idx)}
+                    style={{
+                      textAlign: "left",
+                      padding: "7px 8px",
+                      borderRadius: 8,
+                      border: "none",
+                      cursor: "pointer",
+                      background: done ? "rgba(16,185,129,0.22)" : "rgba(255,255,255,0.05)",
+                      color: done ? "#6EE7B7" : MUTED,
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {done ? "✓" : "○"} หน้า {b.start}-{b.end}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: "#60A5FA", marginBottom: 8 }}>TRUST CHECKLIST</div>
             {FREELANCE_TRUST_ITEMS.map((item, idx) => (
               <div key={idx} onClick={() => toggleFreelanceItem(idx)} style={{ display: "flex", gap: 8, alignItems: "flex-start", cursor: "pointer", padding: "6px 0" }}>
@@ -1491,7 +1615,7 @@ export default function ExpertTracker() {
             background: CARD, color: MUTED, fontSize: 11, cursor: "pointer",
           }}>← Overview</button>
         )}
-        <button onClick={() => { if (confirm("ลบ progress ทั้งหมด?")) { setDone({}); setPretestResults({}); setHintsUsed({}); setDailyDifficulty({}); setDailyConfidence({}); setPortfolioProgress({}); setFreelanceChecklist({}); } }} style={{
+        <button onClick={() => { if (confirm("ลบ progress ทั้งหมด?")) { setDone({}); setPretestResults({}); setHintsUsed({}); setDailyDifficulty({}); setDailyConfidence({}); setPortfolioProgress({}); setFreelanceChecklist({}); setDdiaPace(3); setDdiaPagesRead(0); setDdiaMilestones({}); } }} style={{
           padding: "7px 16px", borderRadius: 99, border: `1px solid ${BORDER}`,
           background: CARD, color: MUTED, fontSize: 11, cursor: "pointer",
         }}>🔄 Reset</button>
