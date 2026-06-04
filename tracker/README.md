@@ -28,6 +28,21 @@ Use these rules in every coaching session for this project.
 - Scoring: mark each drill as `Easy`, `Medium`, or `Hard`
 - Reflection: write one short note about what was confusing
 
+### Logic Planning Before Code (Required)
+
+Before writing code for any practice problem, write this plan first:
+
+```txt
+Input:
+Output:
+Helper variable:
+Repeat:
+Each round:
+Return:
+```
+
+Use plain language first, then translate the plan into JavaScript.
+
 ### Coaching Style Rules
 
 - No full solution first
