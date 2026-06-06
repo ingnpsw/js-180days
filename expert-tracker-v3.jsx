@@ -322,7 +322,7 @@ const DAYS = [
     ["SaaS Core P2", "CRUD complete"],
     ["SaaS Advanced", "PDF/calendar/DnD"],
     ["SaaS Mobile Polish", "responsive"],
-    ["Security + Env", ".env + RLS audit"],
+    ["Env + OWASP App Security", "Top 10 2025 + API risks"],
     ["Testing Basics", "Vitest + RTL"],
     ["Performance + SEO", "Lighthouse >90"],
     ["Git Workflow", "branches + PRs"],
