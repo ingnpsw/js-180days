@@ -101,7 +101,7 @@ const PORTFOLIO_MILESTONES = [
   { id: "p2", day: 33, title: "Weather App", target: "API + loading/error state" },
   { id: "p3", day: 59, title: "CRUD Blog", target: "Auth + DB + deploy" },
   { id: "p4", day: 70, title: "Mini SaaS", target: "dashboard + file upload + role" },
-  { id: "p5", day: 90, title: "Portfolio + Client Pack", target: "profile + proposal templates" },
+  { id: "p5", day: 90, title: "Portfolio + Client Pack", target: "profile + product/UI judgment + client template matrix + proposal" },
   { id: "p6", day: 165, title: "System Design Case", target: "architecture + trade-off doc" },
 ];
 
@@ -113,11 +113,32 @@ const PORTFOLIO_STATUS = [
   { key: "live", label: "Live", color: "#34D399" },
 ];
 
+const COACHING_EXECUTION_LOOP = [
+  "Step 1: define target role and artifact before coding เช่น landing zone note, Terraform module, CI pipeline, case study",
+  "Step 2: write plan first: input, output, components, risks, success criteria, cost/security assumptions",
+  "Step 3: implement smallest working slice แล้วอธิบาย trade-off ด้วยภาษาของตัวเอง",
+  "Step 4: review with AI เฉพาะหลังจากเราคิดเองแล้ว โดยให้ AI หา bug, edge case, threat, cost risk",
+  "Step 5: ship artifact ทุกครั้ง: README, diagram, screenshot, deploy note, reflection, next improvement",
+];
+
+const COACHING_REQUIRED_ARTIFACTS = [
+  "Architecture diagram 1 หน้า",
+  "README ที่รันงานได้จริง",
+  "Decision log พร้อม trade-off",
+  "Demo note หรือ screenshot flow หลัก",
+  "Case study แบบ Problem -> Decision -> Result",
+  "Backlog / next steps สำหรับ iteration ถัดไป",
+];
+
 const FREELANCE_TRUST_ITEMS = [
   "มีอย่างน้อย 2 โปรเจกต์ที่แก้ปัญหาธุรกิจชัดเจน",
   "แต่ละโปรเจกต์มี Problem -> Solution -> Result",
   "แต่ละโปรเจกต์มี Demo + Repo + README + Case Study",
   "มีผลลัพธ์เชิงตัวเลข (before/after) อย่างน้อย 1 จุด",
+  "มี client template matrix แยกตาม SME / Growing / Enterprise",
+  "มี product/UI judgment checklist ก่อนส่งงาน",
+  "มี scale readiness checklist ก่อนรับงานที่มีผู้ใช้จริง",
+  "มี requirement traceability matrix ตั้งแต่ business need ถึง UAT/sign-off",
   "มี proposal template + pricing package พร้อมใช้",
   "มี handoff checklist + revision policy",
 ];
@@ -126,6 +147,8 @@ const CASE_STUDY_SECTIONS = [
   "Project / Role / Duration / Stack / Demo / Repo",
   "Problem และผลกระทบก่อนแก้",
   "Scope (In scope / Out of scope / Constraints)",
+  "Business goal / User goal / Stakeholder request",
+  "Requirement traceability: source -> dev -> test -> UAT",
   "Solution + Architecture แบบย่อ",
   "Technical decisions + Trade-offs",
   "Result (ตัวเลข + business impact) + Next improvements",
@@ -133,10 +156,253 @@ const CASE_STUDY_SECTIONS = [
 
 const PROPOSAL_SECTIONS = [
   "Client context + problem summary",
+  "Client segment + recommended template pack",
   "Scope + deliverables + timeline/milestones",
   "Pricing package (Starter/Pro/Premium)",
   "Assumptions + revision policy + payment terms",
   "Risk & mitigation + acceptance criteria + sign-off",
+  "Scale assumptions + reliability/security/observability scope",
+  "Requirement traceability matrix + change impact process",
+];
+
+const REQUIREMENT_TRACEABILITY_FLOW = [
+  "Business Need",
+  "Requirement",
+  "User Story / Design",
+  "Development Task",
+  "Test Case",
+  "UAT / Sign-off",
+];
+
+const REQUIREMENT_TRACEABILITY_ITEMS = [
+  "ทุก requirement มี owner/source: ลูกค้า, stakeholder, data, regulation หรือ business goal",
+  "ทุก requirement link ไป business goal และ success metric ได้",
+  "ทุก requirement แตกเป็น user story/design/dev task ที่ทำได้จริง",
+  "ทุก requirement มี acceptance criteria และ test case อย่างน้อย 1 เคส",
+  "รู้สถานะของแต่ละ requirement: pending, design, dev, test, UAT, signed-off",
+  "ถ้า requirement เปลี่ยน ต้องรู้ impact ต่อ screen, API, DB, test, timeline, price",
+  "ก่อน go-live เช็กได้ว่า critical requirements ถูก dev/test/UAT ครบแล้ว",
+];
+
+const REQUIREMENT_TRACEABILITY_COLUMNS = [
+  "ID",
+  "Business Goal",
+  "Requirement",
+  "Story/Design",
+  "Dev Task",
+  "Test Case",
+  "UAT Status",
+  "Impact if changed",
+];
+
+const SCALE_READINESS_ITEMS = [
+  "ระบุ target users: 100 / 1,000 / 10,000 / 100,000+ และ peak traffic",
+  "แยก prototype/MVP ออกจาก production system ให้ชัดใน proposal",
+  "กำหนด reliability: backup, retry, fail state, rollback, incident contact",
+  "กำหนด performance budget: page speed, API latency, DB/index/query risk",
+  "กำหนด security scope: authz, secrets, rate limit, audit log, OWASP/API risks",
+  "กำหนด data consistency: transaction, duplicate submit, webhook/idempotency",
+  "กำหนด observability: logs, metrics, alerts, error tracking, uptime checks",
+  "ประเมิน infrastructure + cost efficiency ก่อน quote ราคา",
+  "ถ้างานแตะ cloud/AI ให้เช็ก landing zone, IAM, network boundary, budget guardrail ก่อนเริ่ม build",
+];
+
+const SCALE_SCOPE_PACKS = [
+  {
+    level: "Prototype / Vibe Build",
+    fit: "validate idea, demo, internal proof",
+    promise: "usable demo, happy-path flow, basic handoff",
+    risk: "not promised for traffic, critical data, payments, or regulated workflows",
+  },
+  {
+    level: "MVP Launch",
+    fit: "small real users, early customers, SME launch",
+    promise: "auth, validation, basic tests, deploy, backup notes, known limitations",
+    risk: "scale assumptions must be documented before marketing push",
+  },
+  {
+    level: "Production Growth",
+    fit: "paid users, team workflows, repeated operations",
+    promise: "RBAC, monitoring, rate limits, error handling, performance checks, incident plan",
+    risk: "requires ongoing maintenance budget and operational ownership",
+  },
+  {
+    level: "Scale / Enterprise",
+    fit: "high traffic, sensitive data, mission-critical workflows",
+    promise: "architecture review, reliability targets, security review, CI/CD, observability, cost plan",
+    risk: "never price like a simple website; discovery phase required first",
+  },
+];
+
+const PRODUCT_UI_JUDGMENT_ITEMS = [
+  "แยก business goal, user goal, stakeholder request ก่อนเริ่มออกแบบ",
+  "เขียน primary user flow 1 เส้นก่อนลง code",
+  "เลือก UI pattern จากงานจริง ไม่ใช่จากความสวยของ mockup",
+  "ตรวจ loading, empty, error, success state",
+  "ตรวจ mobile, keyboard flow, accessibility basics",
+  "ตัด feature ที่ไม่ช่วย goal หรือเกินงบ/scope ได้",
+  "หลังคิดเองแล้ว ใช้ AI เฉพาะ review และหา edge case ห้ามให้ AI เริ่มแทน",
+];
+
+const REAL_WORLD_SCENARIO_DRILLS = [
+  {
+    scenario: "คลินิก / Wellness",
+    goal: "เพิ่ม booking และลดแชทถามข้อมูลซ้ำ",
+    drill: "ออกแบบ service page + CTA + booking flow + FAQ ที่ลูกค้าแก้เองได้",
+  },
+  {
+    scenario: "ร้านอาหาร / Local Service",
+    goal: "ให้คนเชื่อใจเร็วและติดต่อได้ใน 1-2 taps",
+    drill: "จัด priority ของ menu, location, review, Line/phone, opening hours บนมือถือ",
+  },
+  {
+    scenario: "SME Dashboard",
+    goal: "ช่วยเจ้าของเห็นงานที่ต้องตัดสินใจวันนี้",
+    drill: "เลือก metrics, filters, empty state, permission และ export ที่จำเป็นจริง",
+  },
+  {
+    scenario: "ลูกค้าขอแอปใหญ่แต่งบน้อย",
+    goal: "ลด scope ให้เหลือ MVP ที่ส่งมอบและวัดผลได้",
+    drill: "แยก must-have, later, out-of-scope พร้อมเหตุผลทางธุรกิจ",
+  },
+  {
+    scenario: "Corporate AI / MLOps Platform",
+    goal: "ออกแบบระบบ AI บน cloud ที่ deploy ได้จริง ปลอดภัย และคุมค่าใช้จ่ายได้",
+    drill: "กำหนด Azure services, network boundary, IAM, CI/CD, model lifecycle, monitoring, และ cost guardrail ก่อนแตะ implementation",
+  },
+];
+
+const PRODUCT_BUILDER_SKILLS = [
+  "Requirement discovery",
+  "Requirement traceability",
+  "Information architecture",
+  "Wireframe before code",
+  "UI pattern selection",
+  "Design system usage",
+  "Usability QA",
+  "Scale readiness scoping",
+  "AI review after human draft",
+  "Business impact framing",
+  "Cloud architecture basics",
+  "Terraform / IaC thinking",
+  "CI/CD pipeline design",
+  "Containerization workflow",
+  "IAM + governance basics",
+  "Observability + cost control",
+];
+
+const CLOUD_DEVOPS_AI_ROLE_AREAS = [
+  {
+    title: "Cloud Architecture & Infrastructure",
+    detail: "ออกแบบ cloud-native architecture ที่ secure, scalable, และรองรับ AI/data workloads ได้จริง ไม่ใช่แค่ deploy เว็บขึ้น cloud",
+  },
+  {
+    title: "Network & Cloud Security",
+    detail: "เข้าใจ landing zone, hub-spoke, firewall, NSG, route table, private endpoint, และวิธีจำกัดการเข้าถึง service สำคัญ",
+  },
+  {
+    title: "End-to-End MLOps",
+    detail: "รู้เส้นทาง model lifecycle: data -> training -> registry -> deployment -> monitoring -> rollback โดยใช้ MLflow หรือ Azure ML เป็นตัวอย่าง",
+  },
+  {
+    title: "Pipelines & Automation",
+    detail: "ทำ IaC ด้วย Terraform และต่อ CI/CD ให้ provision infrastructure, build container, run checks, และ deploy ได้ซ้ำอย่างมั่นใจ",
+  },
+  {
+    title: "Identity & Governance",
+    detail: "ใช้ Entra ID, managed identity, RBAC, secrets, และ compliance thinking เพื่อไม่ให้ระบบ AI เปิดกว้างเกินจำเป็น",
+  },
+  {
+    title: "Cost & Reliability",
+    detail: "คิดเรื่อง autoscaling, quota, budget alert, reserved capacity, logging, incident path, และ cost/performance trade-off ตั้งแต่ช่วง design",
+  },
+];
+
+const CLOUD_DEVOPS_AI_PORTFOLIO_LABS = [
+  "Lab 1: ออกแบบ Azure landing zone แบบย่อสำหรับ AI workload พร้อม network diagram และเหตุผล",
+  "Lab 2: เขียน Terraform สำหรับ VNet, subnet, NSG, storage, container app หรือ VM ชุดเล็ก",
+  "Lab 3: ทำ Dockerize service 1 ตัว แล้วต่อ pipeline build/test/deploy อัตโนมัติ",
+  "Lab 4: สร้าง mini MLOps flow: train mock model -> register -> deploy -> log prediction",
+  "Lab 5: ทำ architecture review 1 หน้าเรื่อง identity, secrets, private access, และ budget guardrail",
+  "Lab 6: เขียน case study cost optimization ว่าลดค่า cloud จากจุดไหนได้บ้างและ trade-off คืออะไร",
+];
+
+const CLOUD_DEVOPS_AI_COACHING_SPRINTS = [
+  {
+    sprint: "Sprint 1",
+    focus: "Cloud foundation",
+    output: "Azure architecture note + landing zone diagram + service choice rationale",
+  },
+  {
+    sprint: "Sprint 2",
+    focus: "Terraform + network baseline",
+    output: "Terraform module set + variables + apply flow + README",
+  },
+  {
+    sprint: "Sprint 3",
+    focus: "Container + CI/CD",
+    output: "Dockerized app + pipeline YAML + release checklist",
+  },
+  {
+    sprint: "Sprint 4",
+    focus: "MLOps lifecycle",
+    output: "mini model pipeline + registry/deploy flow + monitoring note",
+  },
+  {
+    sprint: "Sprint 5",
+    focus: "Security, IAM, and cost",
+    output: "identity/governance review + budget guardrail plan + risk register",
+  },
+  {
+    sprint: "Sprint 6",
+    focus: "Portfolio packaging",
+    output: "case study + architecture summary + hiring-ready project page",
+  },
+];
+
+const CLIENT_TEMPLATE_PACKS = [
+  {
+    segment: "SME Local",
+    fit: "ร้าน, คลินิก, wellness, service business",
+    template: "Static site + CMS + contact form + booking integration",
+    stack: "Astro/Next static, lightweight CMS, Netlify/Vercel/Cloudflare",
+  },
+  {
+    segment: "SME Growing",
+    fit: "ธุรกิจที่เริ่มมี lead, member, payment, internal workflow",
+    template: "Business site + dashboard + auth + payment/CRM-lite",
+    stack: "Next.js, Supabase/Postgres, Stripe, email automation",
+  },
+  {
+    segment: "Content / Creator",
+    fit: "blog, newsletter, education, media, personal brand",
+    template: "CMS-first content hub + landing pages + email capture",
+    stack: "Astro/Next, Sanity/Directus/WordPress, Resend/Mailchimp",
+  },
+  {
+    segment: "E-commerce",
+    fit: "catalog, product drops, small online store",
+    template: "Catalog/storefront + cart/payment + admin handoff",
+    stack: "Shopify/WooCommerce for simple stores, Next.js commerce for custom",
+  },
+  {
+    segment: "Enterprise / Internal",
+    fit: "team workflows, permissions, compliance, auditability",
+    template: "Internal tool + RBAC + audit log + staging + monitoring",
+    stack: "TypeScript, Next.js/React, Postgres, SSO, tests, CI/CD",
+  },
+  {
+    segment: "AI / Data Platform",
+    fit: "internal AI tools, model APIs, analytics, automation, regulated access",
+    template: "App/API + data pipeline + model serving + observability + cost controls",
+    stack: "Azure, Python, Docker, Terraform, CI/CD, MLflow/Azure ML, monitoring",
+  },
+  {
+    segment: "No-code Handoff",
+    fit: "ลูกค้างบน้อยหรืออยากแก้เว็บเองหลังส่งมอบ",
+    template: "Builder-based website + editable sections + handoff training",
+    stack: "Webflow, Framer, WordPress builder, Wix Studio",
+  },
 ];
 
 const DDIA_TOTAL_PAGES = 613;
@@ -340,9 +606,9 @@ const DAYS = [
     ["Clone Landing P1", "pick a famous site"],
     ["Clone Landing P1 Done", "complete + deploy"],
     ["Clone Landing P2", "speed run"],
-    ["Component Library", "Button, Input, Modal, etc."],
-    ["Form UI + Validation", "controlled + errors"],
-    ["Dashboard UI", "sidebar + charts"],
+    ["Component Library", "design system + reusable UI"],
+    ["Form UX + Validation", "errors + states + recovery"],
+    ["Dashboard IA + UI", "priority + charts + decisions"],
     ["🏆 Phase 2 Complete", "deploy all"],
   ]),
 
@@ -362,7 +628,7 @@ const DAYS = [
     ["File Upload", "Supabase Storage"],
     ["Relations + Profiles", "joins"],
     ["🏆 Blog Deploy", "production ready"],
-    ["Mini SaaS Plan", "wireframe + schema"],
+    ["Mini SaaS Plan", "wireframe + schema + assumptions"],
     ["SaaS Auth + Layout", "dashboard"],
     ["SaaS Core P1", "main feature"],
     ["SaaS Core P2", "CRUD complete"],
@@ -377,7 +643,7 @@ const DAYS = [
 
   // Week 11-13: Portfolio + Freelance
   ...generatePhaseMeta(71, 90, 4, [
-    ["Portfolio Plan", "layout + design system"],
+    ["Portfolio Plan", "positioning + layout + design system"],
     ["Hero + About", "animated sections"],
     ["Projects Section", "3-4 best works"],
     ["Contact + Deploy", "form + social"],
@@ -388,11 +654,11 @@ const DAYS = [
     ["Fastwork + LinkedIn", "Thai market"],
     ["Bid Training", "proposal writing"],
     ["More Bids + Comm", "follow up"],
-    ["Figma Basics", "inspect + export"],
-    ["Speed Coding", "landing in 2hr"],
+    ["Figma + Human Review", "inspect + handoff + AI edge-case review"],
+    ["Speed Coding", "real-world landing in 2hr"],
     ["🏆 Bid Day", "10-15 proposals"],
-    ["Service Packages", "tiered pricing"],
-    ["Spec + Contract", "protect yourself"],
+    ["Service Packages", "client segments + template matrix"],
+    ["Spec + Contract", "requirements + scope + acceptance"],
     ["Continuous Bidding", "daily routine"],
     ["Learn from Work", "real project"],
     ["Freelance Review", "plan next 90"],
@@ -556,9 +822,15 @@ function buildSolidPlan(day, phase) {
       learnUrl: "https://github.com/readme/guides/first-freelance-client",
       pretest: "เขียน requirement ลูกค้าแบบ user story 5 ข้อ โดยไม่เปิดเอกสารเดิม",
       build: [
+        "แยก business goal / user goal / stakeholder request ของงานวันนี้",
+        "วาดหรือเขียน primary user flow ก่อนลง code",
+        "สร้าง traceability row: business need -> requirement -> story/design -> dev -> test -> UAT",
+        "ระบุ scale assumption: users, traffic, data risk, reliability expectation",
         "แปลง requirement เป็น task list พร้อม estimate (S/M/L)",
         "ทำ feature ที่ส่งมอบลูกค้าได้จริง 1 ชิ้น พร้อม acceptance criteria",
-        "เขียน demo script 2 นาที (problem -> solution -> ROI)",
+        "ทำ UX QA: loading / empty / error / success / mobile ก่อน handoff",
+        "หลังทำเองครบแล้ว ใช้ AI เฉพาะ review + หา edge case ห้าม rewrite solution",
+        "เขียน demo script 2 นาที (problem -> solution -> ROI + trade-off)",
         "อัปเดต portfolio log: what built / what learned / next fix",
       ],
       challenge: isCheckpoint
@@ -1007,7 +1279,7 @@ export default function ExpertTracker() {
             }}>✕</button>
           </div>
           <div style={{ fontSize: 11, color: MUTED, marginBottom: 10 }}>
-            Copy แล้ว paste ใน Claude/ChatGPT — AI จะ guide ไม่ solve ให้
+            ใช้หลังจากลองเองแล้วเท่านั้น — AI review, quiz, hint, หา edge case; ไม่ rewrite ไม่ solve
           </div>
           <pre style={{
             background: "rgba(255,255,255,0.03)", padding: 12, borderRadius: 8,
@@ -1040,7 +1312,7 @@ export default function ExpertTracker() {
           No AI Shortcuts
         </h1>
         <p style={{ margin: 0, fontSize: 11, color: MUTED, position: "relative" }}>
-          Self-driven • AI as coach, not crutch • Live code ready
+          Human-first • AI reviews after your attempt • Edge cases only
         </p>
       </div>
 
@@ -1075,7 +1347,10 @@ export default function ExpertTracker() {
       {/* ─── AI TEMPLATE BAR ─── */}
       <div style={{ padding: "14px 14px 0" }}>
         <div style={{ fontSize: 10, letterSpacing: 1.5, color: MUTED, fontWeight: 700, marginBottom: 6, textTransform: "uppercase" }}>
-          🤖 AI Toolbox
+          🤖 AI Review Toolbox
+        </div>
+        <div style={{ marginBottom: 8, padding: "8px 10px", borderRadius: 8, background: "rgba(232,168,56,0.08)", border: "1px solid rgba(232,168,56,0.22)", color: "#FDE68A", fontSize: 10, lineHeight: 1.45 }}>
+          Human starts first: เขียน/ออกแบบ/อธิบายจากความเข้าใจตัวเองก่อน แล้วค่อยใช้ AI เป็น reviewer และ edge-case finder เท่านั้น
         </div>
         <div style={{ display: "flex", gap: 5, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
           {[
@@ -1581,6 +1856,165 @@ export default function ExpertTracker() {
                 <span style={{ fontSize: 11, color: freelanceChecklist[idx] ? MUTED : TEXT, textDecoration: freelanceChecklist[idx] ? "line-through" : "none" }}>{item}</span>
               </div>
             ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#FBBF24", marginBottom: 8 }}>COACHING EXECUTION LOOP</div>
+            {COACHING_EXECUTION_LOOP.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ width: 18, color: "#FDE68A", fontSize: 10, fontWeight: 800 }}>{i + 1}.</div>
+                <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA", marginBottom: 8 }}>REQUIRED ARTIFACTS PER LAB</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {COACHING_REQUIRED_ARTIFACTS.map((item) => (
+                <div key={item} style={{ padding: "5px 8px", borderRadius: 999, background: "rgba(167,139,250,0.10)", border: "1px solid rgba(167,139,250,0.22)", color: "#DDD6FE", fontSize: 10, fontWeight: 700 }}>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#22C55E", marginBottom: 8 }}>CLOUD / DEVOPS / MLOPS TARGET ROLE</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
+              {CLOUD_DEVOPS_AI_ROLE_AREAS.map((item) => (
+                <div key={item.title} style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: 9 }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: TEXT, marginBottom: 4 }}>{item.title}</div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.5 }}>{item.detail}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", marginBottom: 8 }}>CLOUD / DEVOPS / MLOPS COACHING SPRINTS</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
+              {CLOUD_DEVOPS_AI_COACHING_SPRINTS.map((item) => (
+                <div key={item.sprint} style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: 9 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 4 }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: TEXT }}>{item.sprint}</div>
+                    <div style={{ fontSize: 9, color: "#BAE6FD" }}>{item.focus}</div>
+                  </div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.45 }}>{item.output}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#34D399", marginBottom: 8 }}>CLIENT TEMPLATE MATRIX</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
+              {CLIENT_TEMPLATE_PACKS.map((pack) => (
+                <div key={pack.segment} style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: 9 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "flex-start", marginBottom: 5 }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: TEXT }}>{pack.segment}</div>
+                    <div style={{ fontSize: 9, color: MUTED, textAlign: "right", maxWidth: 170 }}>{pack.fit}</div>
+                  </div>
+                  <div style={{ fontSize: 10, color: "#D1FAE5", lineHeight: 1.45, marginBottom: 4 }}>{pack.template}</div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.45 }}>{pack.stack}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#F97316", marginBottom: 8 }}>CLOUD / DEVOPS / MLOPS PORTFOLIO LABS</div>
+            {CLOUD_DEVOPS_AI_PORTFOLIO_LABS.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ width: 18, color: "#FDBA74", fontSize: 10, fontWeight: 800 }}>{i + 1}.</div>
+                <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#F472B6", marginBottom: 8 }}>PRODUCT/UI JUDGMENT CHECKLIST</div>
+            {PRODUCT_UI_JUDGMENT_ITEMS.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ width: 18, color: "#F9A8D4", fontSize: 10, fontWeight: 800 }}>{i + 1}.</div>
+                <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#C084FC", marginBottom: 8 }}>REQUIREMENT TRACEABILITY</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 9 }}>
+              {REQUIREMENT_TRACEABILITY_FLOW.map((step, i) => (
+                <div key={step} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <div style={{ padding: "5px 7px", borderRadius: 999, background: "rgba(192,132,252,0.10)", border: "1px solid rgba(192,132,252,0.22)", color: "#E9D5FF", fontSize: 9, fontWeight: 800 }}>
+                    {step}
+                  </div>
+                  {i < REQUIREMENT_TRACEABILITY_FLOW.length - 1 && <div style={{ color: MUTED, fontSize: 10 }}>→</div>}
+                </div>
+              ))}
+            </div>
+            {REQUIREMENT_TRACEABILITY_ITEMS.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ width: 18, color: "#D8B4FE", fontSize: 10, fontWeight: 800 }}>{i + 1}.</div>
+                <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item}</div>
+              </div>
+            ))}
+            <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", flexWrap: "wrap", gap: 5 }}>
+              {REQUIREMENT_TRACEABILITY_COLUMNS.map((col) => (
+                <div key={col} style={{ padding: "4px 6px", borderRadius: 6, background: "rgba(255,255,255,0.04)", color: MUTED, fontSize: 9, fontWeight: 700 }}>
+                  {col}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#FB7185", marginBottom: 8 }}>SCALE READINESS BEFORE ACCEPTING WORK</div>
+            {SCALE_READINESS_ITEMS.map((item, i) => (
+              <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", padding: "5px 0", borderTop: i ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ width: 18, color: "#FDA4AF", fontSize: 10, fontWeight: 800 }}>{i + 1}.</div>
+                <div style={{ fontSize: 11, color: TEXT, lineHeight: 1.45 }}>{item}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#22D3EE", marginBottom: 8 }}>SCALE SCOPE PACKS</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
+              {SCALE_SCOPE_PACKS.map((pack) => (
+                <div key={pack.level} style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: 9 }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: TEXT, marginBottom: 4 }}>{pack.level}</div>
+                  <div style={{ fontSize: 10, color: "#A5F3FC", lineHeight: 1.45, marginBottom: 4 }}>{pack.fit}</div>
+                  <div style={{ fontSize: 10, color: TEXT, lineHeight: 1.45, marginBottom: 4 }}>{pack.promise}</div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.45 }}>{pack.risk}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", marginBottom: 8 }}>REAL-WORLD SCENARIO DRILLS</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 8 }}>
+              {REAL_WORLD_SCENARIO_DRILLS.map((item) => (
+                <div key={item.scenario} style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: 9 }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: TEXT, marginBottom: 4 }}>{item.scenario}</div>
+                  <div style={{ fontSize: 10, color: "#BAE6FD", lineHeight: 1.45, marginBottom: 4 }}>{item.goal}</div>
+                  <div style={{ fontSize: 10, color: MUTED, lineHeight: 1.45 }}>{item.drill}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#FBBF24", marginBottom: 8 }}>PRODUCT BUILDER SKILL STACK</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {PRODUCT_BUILDER_SKILLS.map((skill) => (
+                <div key={skill} style={{ padding: "5px 8px", borderRadius: 999, background: "rgba(251,191,36,0.10)", border: "1px solid rgba(251,191,36,0.22)", color: "#FDE68A", fontSize: 10, fontWeight: 700 }}>
+                  {skill}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10 }}>

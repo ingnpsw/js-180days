@@ -32,6 +32,8 @@
 - Deploy (staging/production ตามตกลง)
 - Documentation (README + handoff note)
 - Basic QA/Test report
+- Architecture/infra diagram (ถ้าเป็นระบบ backend/cloud/AI)
+- Decision log + known trade-offs
 
 ## 5) Timeline & Milestones
 - Milestone 1 (Discovery/Setup):
@@ -81,13 +83,21 @@ Estimated timeline: __ weeks
 - Risk 2:
 - Mitigation:
 
-## 11) Acceptance Criteria
+## 11) Cloud / Security / Operations Scope
+- Hosting/cloud provider:
+- IAM / access control scope:
+- Network/security boundary:
+- CI/CD automation:
+- Monitoring / alerting:
+- Cost guardrail / budget assumptions:
+
+## 12) Acceptance Criteria
 งานจะถือว่าเสร็จเมื่อ:
 - 
 - 
 - 
 
-## 12) Sign-off
+## 13) Sign-off
 - Client name/signature:
 - Date:
 - Developer name/signature:

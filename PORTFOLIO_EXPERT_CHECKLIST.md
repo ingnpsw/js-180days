@@ -38,6 +38,16 @@ Status legend:
 - [ ] Live demo URL
 - [ ] Repo + README
 
+### Project D: Cloud / DevOps / MLOps Platform
+- [ ] Architecture diagram for cloud landing zone / network boundary
+- [ ] Terraform or IaC modules for core infrastructure
+- [ ] Containerized service with Docker
+- [ ] CI/CD pipeline for build/test/deploy
+- [ ] Identity/access model documented (RBAC, secrets, managed identity, etc.)
+- [ ] Monitoring/cost guardrail plan documented
+- [ ] Mini case study for AI/ML lifecycle or platform workflow
+- [ ] Repo + README
+
 ## 2) Production Engineering Quality (Per Project)
 - [ ] Architecture diagram (high-level)
 - [ ] API contract/doc (OpenAPI/Postman/Markdown)
@@ -50,6 +60,8 @@ Status legend:
 - [ ] Secrets management policy (no hardcoded secrets)
 - [ ] Basic security controls (authz, rate limit, input sanitization)
 - [ ] Performance notes (index/cache/query optimization)
+- [ ] Decision log with trade-offs
+- [ ] Demo note or screenshot flow for reviewer
 
 ## 3) Portfolio Website Quality
 - [ ] Project cards with role/scope/impact
@@ -67,6 +79,8 @@ Status legend:
 - [ ] Clear trade-off explanations in docs
 - [ ] Backlog/milestone tracking evidence
 - [ ] Meaningful commit/PR history
+- [ ] At least 1 cloud cost/performance trade-off write-up
+- [ ] At least 1 security/governance review note
 
 ## 5) Interview/Freelance Readiness
 - [ ] 3 mock interviews completed (coding/system/behavioral)
@@ -95,4 +109,3 @@ You can call your portfolio "solid expert-level" when all are true:
 1.
 2.
 3.
-

@@ -31,4 +31,56 @@ Ans: Finding the highest score, calculating the average, and counting passed stu
 // Helper variables: highestScore, totalScore, averageScore, passedCount.
 // Repeat: none
 // Each round: none
-// Return / Print: return highest score, average score, and number of pass students.
+// Return / Print: print highest score, average score, and number of passed students.
+
+let score1 = 80;
+let score2 = 45;
+let score3 = 60;
+let score4 = 90;
+let score5 = 50;
+
+function calHighestScore(score1, score2, score3, score4, score5){
+    let hightestScore = score1;
+    if(hightestScore  < score2){
+        hightestScore = score2;
+    }
+    if(hightestScore < score3){
+        hightestScore = score3;
+    }
+    if(hightestScore < score4){
+        hightestScore = score4;
+    }
+    if(hightestScore < score5){
+        hightestScore = score5;
+    }
+    return hightestScore;
+}
+
+function avgScore(score1, score2, score3, score4, score5){
+    return avgScore = (score1 + score2 + score3 + score4 + score5)/5;
+}
+
+function calPassStudentNumber(score1, score2, score3, score4, score5){
+    let passScore = 50;
+    let passNumber = 0;
+    if(score1 >= 50){
+        passNumber += 1;
+    }
+    if(score2 >= 50){
+        passNumber += 1;
+    }
+    if(score3 >= 50){
+        passNumber += 1;
+    }
+    if(score4 >= 50){
+        passNumber += 1;
+    }
+    if(score5 >= 50){
+        passNumber += 1;
+    }
+    return passNumber;
+}
+
+console.log("Highest score:" + calHighestScore(score1, score2, score3, score4, score5));
+console.log("Average Score: " + avgScore(score1, score2, score3, score4, score5));
+console.log("Pass Student Number: " + calPassStudentNumber(score1, score2, score3, score4, score5));

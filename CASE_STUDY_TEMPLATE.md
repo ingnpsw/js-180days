@@ -22,6 +22,8 @@
 - Architecture แบบย่อ:
 - Key features ที่ส่งมอบ:
 - Data model/API flow โดยสรุป:
+- Infra / cloud components:
+- CI/CD / deployment flow:
 
 ## 4) Technical Decisions
 - Decision A: เพราะอะไร
@@ -34,6 +36,8 @@
 - Test strategy:
 - Security basics:
 - Deploy/monitoring:
+- Cost/performance considerations:
+- IAM / governance considerations:
 
 ## 6) Result
 - ตัวเลขผลลัพธ์ (before -> after):
